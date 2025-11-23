@@ -1,40 +1,55 @@
 import json
 
+
 def load_data(file_path):
     """Loads a JSON file and returns the parsed data."""
-    with open(file_path, "r") as handle:
+    with open(file_path, "r", encoding="utf-8") as handle:
         return json.load(handle)
 
 
-def print_animal_info(animal):
-    """Prints selected information about a single animal."""
+def build_animals_text(data):
+    """Build a plain text block with animal information."""
+    output = ""
 
-    # Name
-    if "name" in animal:
-        print(f"Name: {animal['name']}")
+    for animal in data:
+        # Name
+        if "name" in animal:
+            output += f"Name: {animal['name']}\n"
 
-    # Diet
-    characteristics = animal.get("characteristics", {})
-    if "diet" in characteristics:
-        print(f"Diet: {characteristics['diet']}")
+        # Diet
+        characteristics = animal.get("characteristics", {})
+        if "diet" in characteristics:
+            output += f"Diet: {characteristics['diet']}\n"
 
-    # First Location
-    locations = animal.get("locations")
-    if locations and len(locations) > 0:
-        print(f"Location: {locations[0]}")
+        # First location
+        locations = animal.get("locations")
+        if locations:
+            output += f"Location: {locations[0]}\n"
 
-    # Type
-    if "type" in characteristics:
-        print(f"Type: {characteristics['type']}")
+        # Type (optional)
+        if "type" in characteristics:
+            output += f"Type: {characteristics['type']}\n"
 
-    print()  # Empty line after each animal
+        # Leerzeile zwischen Tieren
+        output += "\n"
+
+    return output
 
 
 def main():
     animals_data = load_data("animals_data.json")
 
-    for animal in animals_data:
-        print_animal_info(animal)
+    with open("animals_template.html", "r", encoding="utf-8") as template_file:
+        template_html = template_file.read()
+
+    animals_text = build_animals_text(animals_data)
+
+    final_html = template_html.replace("__REPLACE_ANIMALS_INFO__", animals_text)
+
+    with open("animals.html", "w", encoding="utf-8") as output_file:
+        output_file.write(final_html)
+
+    print("animals.html wurde erzeugt.")
 
 
 if __name__ == "__main__":
