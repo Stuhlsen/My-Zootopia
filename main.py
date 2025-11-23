@@ -7,33 +7,40 @@ def load_data(file_path):
         return json.load(handle)
 
 
+def serialize_animal(animal_obj):
+    """Converts a single animal object into an HTML <li> block."""
+    name = animal_obj.get("name", "Unknown")
+    characteristics = animal_obj.get("characteristics", {})
+    locations = animal_obj.get("locations") or []
+
+    output = '<li class="cards__item">\n'
+    output += f'  <div class="card__title">{name}</div>\n'
+    output += '  <p class="card__text">\n'
+
+    # Diet
+    if "diet" in characteristics:
+        output += f'      <strong>Diet:</strong> {characteristics["diet"]}<br/>\n'
+
+    # Location
+    if locations:
+        output += f'      <strong>Location:</strong> {locations[0]}<br/>\n'
+
+    # Type
+    if "type" in characteristics:
+        output += f'      <strong>Type:</strong> {characteristics["type"]}<br/>\n'
+
+    output += '  </p>\n'
+    output += '</li>\n\n'
+
+    return output
+
+
+
 def build_animals_html(data):
-    """Builds an HTML <li> block for each animal using the card design."""
+    """Builds the HTML for all animals by delegating each one to serialize_animal()."""
     output = ""
-
-    for animal in data:
-        name = animal.get("name", "Unknown")
-        characteristics = animal.get("characteristics", {})
-        locations = animal.get("locations") or []
-
-        output += '<li class="cards__item">\n'
-        output += f'  <div class="card__title">{name}</div>\n'
-        output += '  <p class="card__text">\n'
-
-        # Diet (optional)
-        if "diet" in characteristics:
-            output += f'      <strong>Diet:</strong> {characteristics["diet"]}<br/>\n'
-
-        # Location (optional, first entry)
-        if locations:
-            output += f'      <strong>Location:</strong> {locations[0]}<br/>\n'
-
-        # Type (optional)
-        if "type" in characteristics:
-            output += f'      <strong>Type:</strong> {characteristics["type"]}<br/>\n'
-
-        output += "  </p>\n</li>\n\n"
-
+    for animal_obj in data:
+        output += serialize_animal(animal_obj)
     return output
 
 
