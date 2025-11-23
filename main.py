@@ -8,32 +8,31 @@ def load_data(file_path):
 
 
 def build_animals_html(data):
-    """Builds an HTML <li> block for each animal."""
+    """Builds an HTML <li> block for each animal using the card design."""
     output = ""
 
     for animal in data:
-        output += '<li class="cards__item">\n'
-
-        # Name
-        if "name" in animal:
-            output += f"Name: {animal['name']}<br/>\n"
-
-        # Characteristics (diet, type)
+        name = animal.get("name", "Unknown")
         characteristics = animal.get("characteristics", {})
+        locations = animal.get("locations") or []
 
+        output += '<li class="cards__item">\n'
+        output += f'  <div class="card__title">{name}</div>\n'
+        output += '  <p class="card__text">\n'
+
+        # Diet (optional)
         if "diet" in characteristics:
-            output += f"Diet: {characteristics['diet']}<br/>\n"
+            output += f'      <strong>Diet:</strong> {characteristics["diet"]}<br/>\n'
 
-        # First location
-        locations = animal.get("locations")
+        # Location (optional, first entry)
         if locations:
-            output += f"Location: {locations[0]}<br/>\n"
+            output += f'      <strong>Location:</strong> {locations[0]}<br/>\n'
 
-        # Type
+        # Type (optional)
         if "type" in characteristics:
-            output += f"Type: {characteristics['type']}<br/>\n"
+            output += f'      <strong>Type:</strong> {characteristics["type"]}<br/>\n'
 
-        output += "</li>\n\n"
+        output += "  </p>\n</li>\n\n"
 
     return output
 
